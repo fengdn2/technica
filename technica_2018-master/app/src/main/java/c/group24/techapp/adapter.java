@@ -68,7 +68,7 @@ public class adapter extends BaseExpandableListAdapter {
                         DatabaseReference ref_seats=FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats");
 
 
-                        ref_seats.addValueEventListener(new ValueEventListener() {
+                        ref_seats.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 String seats=dataSnapshot.getValue(String.class);
@@ -81,8 +81,6 @@ public class adapter extends BaseExpandableListAdapter {
                                 seats=Integer.toString(seat_num);
 
                                 FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats").setValue(seats);
-
-
                             }
 
                             @Override
@@ -90,8 +88,6 @@ public class adapter extends BaseExpandableListAdapter {
 
                             }
                         });
-
-                        notifyDataSetChanged();
 
 
 
@@ -122,7 +118,7 @@ public class adapter extends BaseExpandableListAdapter {
                         ref.child(nameStr).setValue(auth.getCurrentUser().getEmail());
                         DatabaseReference ref_seats=FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats");
 
-                        ref_seats.addValueEventListener(new ValueEventListener() {
+                        ref_seats.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 String seats=dataSnapshot.getValue(String.class);
@@ -141,10 +137,8 @@ public class adapter extends BaseExpandableListAdapter {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
-
-
                         });
-                        notifyDataSetChanged();
+
                     }
                 });
             }
