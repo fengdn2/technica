@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "643503452497",
+    "firebase_url": "https://technicaapp-837d7.firebaseio.com",
+    "project_id": "technicaapp-837d7",
+    "storage_bucket": "technicaapp-837d7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643503452497:android:1edd998b83412f20",
+        "android_client_info": {
+          "package_name": "c.group24.techapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643503452497-l5jj11k3q1d30un607ptqsrtfq2aj275.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqqvA869DFSKXCs9TfjFOIvjF4TGNKvIQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
