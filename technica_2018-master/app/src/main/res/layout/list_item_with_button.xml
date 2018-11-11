@@ -16,10 +16,13 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent">
 
+
         <TextView
             android:id="@+id/lblListItem"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:paddingBottom="5dp"
             android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
             android:paddingTop="5dp"
@@ -27,11 +30,13 @@
 
         <Button
             android:id="@+id/myButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Join!"
             android:textAlignment="center"
-            android:visibility="visible"></Button>
+            android:paddingBottom="0dp"
+            android:visibility="visible"
+            android:focusable="false"></Button>
     </LinearLayout>
 
 

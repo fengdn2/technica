@@ -1,6 +1,8 @@
 package c.group24.techapp;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +10,15 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.HashMap;
 import java.util.List;
+import com.google.firebase.*;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class adapter extends BaseExpandableListAdapter {
 
@@ -39,26 +44,107 @@ public class adapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         String childText = (String) getChild(groupPosition, childPosition);
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if(!isLastChild) {
                 convertView = inflater.inflate(R.layout.list_item, null);
+                Log.i("Lastlines",Integer.toString(childPosition));
             }else{
+                Log.i("Lastlines",Integer.toString(childPosition));
                 convertView = inflater.inflate(R.layout.list_item_with_button, null);
                 Button join = convertView.findViewById(R.id.myButton);
+                join.setFocusable(false);
                 join.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         FirebaseAuth auth = FirebaseAuth.getInstance();
                         String nameStr = auth.getCurrentUser().getUid();
-                        String proj_name = headerItem.get(groupPosition);
+                        final String proj_name = headerItem.get(groupPosition);
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
                         ref.child(nameStr).setValue(auth.getCurrentUser().getEmail());
+                        DatabaseReference ref_seats=FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats");
 
 
+                        ref_seats.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String seats=dataSnapshot.getValue(String.class);
+                                int seat_num=Integer.parseInt(seats);
+                                if(seat_num<=0){
+                                    seat_num=0;
+                                }else{
+                                    seat_num=seat_num-1;
+                                }
+                                seats=Integer.toString(seat_num);
+
+                                FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats").setValue(seats);
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        notifyDataSetChanged();
+
+
+
+
+
+
+
+                    }
+                });
+            }
+        }else{
+            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if(!isLastChild) {
+                convertView = inflater.inflate(R.layout.list_item, null);
+                Log.i("Lastlines",Integer.toString(childPosition));
+            }else{
+                Log.i("Lastlines",Integer.toString(childPosition));
+                convertView = inflater.inflate(R.layout.list_item_with_button, null);
+                Button join = convertView.findViewById(R.id.myButton);
+                join.setFocusable(false);
+                join.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        String nameStr = auth.getCurrentUser().getUid();
+                        final String proj_name = headerItem.get(groupPosition);
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
+                        ref.child(nameStr).setValue(auth.getCurrentUser().getEmail());
+                        DatabaseReference ref_seats=FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats");
+
+                        ref_seats.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String seats=dataSnapshot.getValue(String.class);
+                                int seat_num=Integer.parseInt(seats);
+                                if(seat_num<=0){
+                                    seat_num=0;
+                                }else{
+                                    seat_num=seat_num-1;
+                                }
+                                seats=Integer.toString(seat_num);
+
+                                FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats").setValue(seats);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+
+
+                        });
+                        notifyDataSetChanged();
                     }
                 });
             }
@@ -69,7 +155,6 @@ public class adapter extends BaseExpandableListAdapter {
         return convertView;
 
     }
-
 
     @Override
     public int getChildrenCount(int groupPosition) {
