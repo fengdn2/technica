@@ -5,7 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +39,29 @@ public class adapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         String childText = (String) getChild(groupPosition, childPosition);
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_item, null);
+            if(!isLastChild) {
+                convertView = inflater.inflate(R.layout.list_item, null);
+            }else{
+                convertView = inflater.inflate(R.layout.list_item_with_button, null);
+                Button join = convertView.findViewById(R.id.myButton);
+                join.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        String nameStr = auth.getCurrentUser().getUid();
+                        String proj_name = headerItem.get(groupPosition);
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
+                        ref.child(nameStr).setValue(auth.getCurrentUser().getEmail());
+
+
+                    }
+                });
+            }
         }
         TextView tv = convertView.findViewById(R.id.lblListItem);
         tv.setText(childText);
@@ -47,6 +69,7 @@ public class adapter extends BaseExpandableListAdapter {
         return convertView;
 
     }
+
 
     @Override
     public int getChildrenCount(int groupPosition) {
