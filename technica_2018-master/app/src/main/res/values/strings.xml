@@ -1,7 +1,13 @@
 <resources>
-    <string name="app_name">techApp</string>
+    <string name="app_name">Tiny Hack</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="name">Name</string>
+    <string name="pjname">Project Name</string>
+    <string name="pjdes">Project Description</string>
+    <string name="seats">How many members it needs?</string>
+    <string name="pTaking">Projects Taking</string>
+    <string name="pList">Join Project</string>
+    <string name="pPost">Post Project</string>
 </resources>
 

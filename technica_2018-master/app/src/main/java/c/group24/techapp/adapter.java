@@ -1,7 +1,9 @@
 package c.group24.techapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +14,11 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.google.firebase.*;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,10 +66,13 @@ public class adapter extends BaseExpandableListAdapter {
                     @Override
                     public void onClick(View view) {
                         FirebaseAuth auth = FirebaseAuth.getInstance();
-                        String nameStr = auth.getCurrentUser().getUid();
+                        final String uidStr = auth.getCurrentUser().getUid();
+                        String emailStr = auth.getCurrentUser().getEmail();
                         final String proj_name = headerItem.get(groupPosition);
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
-                        ref.child(nameStr).setValue(auth.getCurrentUser().getEmail());
+                        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
+                        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name);
+                        ref.child(uidStr).setValue(emailStr);
+                        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference();
                         DatabaseReference ref_seats=FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats");
 
 
@@ -88,9 +96,26 @@ public class adapter extends BaseExpandableListAdapter {
 
                             }
                         });
+                        Log.e("what","ha");
+                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                         @Override
+                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                             Map<String,Object> add = new HashMap<String, Object>();
+                             for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                 String key = ds.getKey();
+                                 Object value =  ds.getValue();
+                                 add.put(key,value);
+                             }
+                             DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference();
 
+                             ref2.child(uidStr).child(proj_name).updateChildren(add);
+                         }
 
+                         @Override
+                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                         }
+                     });
 
 
 
@@ -112,11 +137,14 @@ public class adapter extends BaseExpandableListAdapter {
                     @Override
                     public void onClick(View view) {
                         FirebaseAuth auth = FirebaseAuth.getInstance();
-                        String nameStr = auth.getCurrentUser().getUid();
+                        final String uidStr = auth.getCurrentUser().getUid();
+                        String emailStr = auth.getCurrentUser().getEmail();
                         final String proj_name = headerItem.get(groupPosition);
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
-                        ref.child(nameStr).setValue(auth.getCurrentUser().getEmail());
+                        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Taken projects and members").child(proj_name);
+                        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name);
+                        ref.child(uidStr).setValue(emailStr);
                         DatabaseReference ref_seats=FirebaseDatabase.getInstance().getReference().child("Projects").child(proj_name).child("Seats");
+
 
                         ref_seats.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -138,6 +166,32 @@ public class adapter extends BaseExpandableListAdapter {
 
                             }
                         });
+                        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference();
+                        Log.e("what","ha");
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Map<String,Object> add = new HashMap<String, Object>();
+                                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                    String key = ds.getKey();
+                                    Object value =  ds.getValue();
+                                    add.put(key,value);
+                                }
+                                DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference();
+
+                                ref2.child(uidStr).child(proj_name).updateChildren(add);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+
+
 
                     }
                 });
@@ -145,6 +199,7 @@ public class adapter extends BaseExpandableListAdapter {
         }
         TextView tv = convertView.findViewById(R.id.lblListItem);
         tv.setText(childText);
+
 
         return convertView;
 
